@@ -1,0 +1,178 @@
+@import "tailwindcss";
+
+/* Dark mode follows the .dark class on <html>, set by the theme toggle. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* spec.md §2.1 tokens ("Strawberry Milk"). Components use bg-bg / text-fg / etc. and switch themes automatically.
+   data-palette on <html> picks a theme; on any other element it previews one (the Settings swatches). */
+:root,
+[data-palette="strawberry"] {
+  --bg: #fff9fa;
+  --surface: #ffffff;
+  --line: #f3dce2;
+  --accent: #e58c9e;
+  --accent-soft: #f8e5ea;
+  --fg: #3d2c31;
+  --muted: #8c7279;
+  /* White on #E58C9E is only 2.4:1; espresso plum gives 5.6:1. */
+  --on-accent: #3d2c31;
+  color-scheme: light;
+}
+
+.dark,
+[data-palette="strawberry"].dark,
+.dark [data-palette="strawberry"] {
+  --bg: #181316;
+  --surface: #221b1f;
+  --line: #362a31;
+  --accent: #d47a8e;
+  --accent-soft: #2e2329;
+  --fg: #f4e8ec;
+  --muted: #a68e96;
+  --on-accent: #181316;
+  color-scheme: dark;
+}
+
+/* Extra themes, contrast-checked: text 4.5:1+ on every surface, button text 5.3:1+. */
+[data-palette="bubblegum"] {
+  --bg: #fff5f8;
+  --surface: #ffffff;
+  --line: #fbd3e0;
+  --accent: #ef6f9c;
+  --accent-soft: #ffe3ec;
+  --fg: #3a1e2a;
+  --muted: #85596a;
+  --on-accent: #3a1e2a;
+}
+[data-palette="bubblegum"].dark,
+.dark [data-palette="bubblegum"] {
+  --bg: #1a1015;
+  --surface: #25161e;
+  --line: #3d2430;
+  --accent: #e2678f;
+  --accent-soft: #351e29;
+  --fg: #fce8f0;
+  --muted: #b98fa0;
+  --on-accent: #1a1015;
+}
+
+[data-palette="lavender"] {
+  --bg: #fbf8ff;
+  --surface: #ffffff;
+  --line: #e8ddf7;
+  --accent: #b392e8;
+  --accent-soft: #f0e8fc;
+  --fg: #33294a;
+  --muted: #74688c;
+  --on-accent: #33294a;
+}
+[data-palette="lavender"].dark,
+.dark [data-palette="lavender"] {
+  --bg: #15121c;
+  --surface: #1e1928;
+  --line: #332a42;
+  --accent: #a58ad9;
+  --accent-soft: #2a2238;
+  --fg: #eee8f8;
+  --muted: #a598bc;
+  --on-accent: #15121c;
+}
+
+[data-palette="peach"] {
+  --bg: #fff8f3;
+  --surface: #ffffff;
+  --line: #f7dccb;
+  --accent: #f2a07b;
+  --accent-soft: #fdeadf;
+  --fg: #43291f;
+  --muted: #86675b;
+  --on-accent: #43291f;
+}
+[data-palette="peach"].dark,
+.dark [data-palette="peach"] {
+  --bg: #1a1411;
+  --surface: #241c18;
+  --line: #3a2c25;
+  --accent: #e08f6c;
+  --accent-soft: #33251f;
+  --fg: #f8eae2;
+  --muted: #b0968a;
+  --on-accent: #1a1411;
+}
+
+[data-palette="cottoncandy"] {
+  --bg: #f8fbff;
+  --surface: #ffffff;
+  --line: #dce8f7;
+  --accent: #f08db8;
+  --accent-soft: #e3f0fd;
+  --fg: #2e2c45;
+  --muted: #6a6d8a;
+  --on-accent: #2e2c45;
+}
+[data-palette="cottoncandy"].dark,
+.dark [data-palette="cottoncandy"] {
+  --bg: #12141c;
+  --surface: #1b1e29;
+  --line: #2c3242;
+  --accent: #e07faa;
+  --accent-soft: #222a3a;
+  --fg: #eaf0fa;
+  --muted: #9ba3bc;
+  --on-accent: #12141c;
+}
+
+[data-palette="matcha"] {
+  --bg: #f9fbf6;
+  --surface: #ffffff;
+  --line: #dde8d3;
+  --accent: #8db37a;
+  --accent-soft: #f6e6ea;
+  --fg: #2c3527;
+  --muted: #67725f;
+  --on-accent: #2c3527;
+}
+[data-palette="matcha"].dark,
+.dark [data-palette="matcha"] {
+  --bg: #121510;
+  --surface: #1b2018;
+  --line: #2d3628;
+  --accent: #86ad74;
+  --accent-soft: #2b2427;
+  --fg: #eaf0e4;
+  --muted: #9daa94;
+  --on-accent: #121510;
+}
+
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-on-accent: var(--on-accent);
+  --font-sans: var(--font-quicksand), ui-rounded, ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-cherry-bomb), ui-rounded, cursive;
+  --shadow-paper: 0 1px 2px rgb(61 44 49 / 0.04), 0 6px 20px rgb(61 44 49 / 0.06);
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Little bounce when a micro-goal is checked off. */
+@theme {
+  --animate-pop: pop 0.35s ease-out;
+  @keyframes pop {
+    40% { transform: scale(1.06); }
+  }
+}
