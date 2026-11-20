@@ -29,3 +29,11 @@ export function catchUp(segments: Segment[], index: number, endAt: number, now: 
   }
   return { index, endAt, done: false, crossed };
 }
+
+/** Random index in [0, n), never `prev` when there's another choice (so a break note doesn't repeat back to back). */
+export function randomOther(prev: number, n: number) {
+  if (n <= 1) return 0;
+  const exclude = prev >= 0 && prev < n;
+  const r = Math.floor(Math.random() * (exclude ? n - 1 : n));
+  return exclude && r >= prev ? r + 1 : r;
+}

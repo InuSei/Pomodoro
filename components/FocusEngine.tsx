@@ -2,7 +2,7 @@
 
 import { useEffect, useEffectEvent, useState } from "react";
 import { Heart, Pause, Play, Plus, RotateCcw, SkipForward, Trash2, Volume2, VolumeX } from "lucide-react";
-import { PRESETS, catchUp, segmentMs, type Preset, type Segment } from "@/lib/timer";
+import { PRESETS, catchUp, randomOther, segmentMs, type Preset, type Segment } from "@/lib/timer";
 import { SUBJECTS, SUBJECT_SHORT, type Subject } from "@/lib/subjects";
 import { chime, unlockAudio } from "@/lib/chime";
 import { addPreset, deletePreset, logSession, type LogInput } from "@/app/actions";
@@ -43,7 +43,7 @@ export default function FocusEngine({ customPresets, notes, deck }: Props) {
   const [unsaved, setUnsaved] = useState<LogInput[]>([]); // logs that failed to reach the database
   const [builderOpen, setBuilderOpen] = useState(false);
   const [builderError, setBuilderError] = useState<string | null>(null);
-  const [noteSeed] = useState(() => Math.floor(Math.random() * 1000));
+  const [noteIndex, setNoteIndex] = useState(-1); // -1 until the first break picks one
   const [restored, setRestored] = useState(false);
   const [recallCards, setRecallCards] = useState<DeckCard[] | null>(null);
 
@@ -51,6 +51,12 @@ export default function FocusEngine({ customPresets, notes, deck }: Props) {
   const seg = segments[index];
   const total = segmentMs(seg);
   const inSession = !done && (running || index > 0 || left < total);
+  const onBreak = seg.type === "break" && !done;
+
+  // Each time a break starts (including repeat rounds of one-break presets), show a fresh random note.
+  useEffect(() => {
+    if (onBreak) setNoteIndex((prev) => randomOther(prev, notes.length));
+  }, [onBreak, index, presetId]); // eslint-disable-line react-hooks/exhaustive-deps -- re-pick per break, not when notes refresh
 
   // Survive a refresh or closed tab: restore once on mount, then save on every change. If segments ended
   // while the tab was closed, the tick below catches up and logs those focus blocks.
@@ -220,7 +226,7 @@ export default function FocusEngine({ customPresets, notes, deck }: Props) {
       ? `Focus${focusCount > 1 ? ` · Block ${block} of ${focusCount}` : ""}`
       : "Break — stretch & sip some water";
   const progress = done ? 1 : 1 - left / total;
-  const note = seg.type === "break" && !done && notes.length ? notes[(noteSeed + index) % notes.length] : null;
+  const note = onBreak && notes.length && noteIndex >= 0 ? notes[noteIndex % notes.length] : null;
 
   return (
     <section className="flex flex-col items-center gap-6 rounded-3xl border border-line bg-surface p-6 shadow-paper sm:p-8">
