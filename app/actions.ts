@@ -79,7 +79,8 @@ export async function deletePreset(id: string) {
 }
 
 // Returns a message instead of throwing: production builds hide thrown error text from the browser.
-// FormData fields: subject, notes, files (0–5 PDFs/photos; the browser has already cut PDFs to the chosen pages).
+// FormData fields: subject, notes, files (0–5 PDFs/photos; the browser has already cut PDFs to the chosen pages),
+// multipleChoice ("1" = cards get 3 wrong options each).
 export async function generateFlashcards(formData: FormData): Promise<{ count: number } | { error: string }> {
   await requireSession();
   const subject = String(formData.get("subject") ?? "") as Subject;
@@ -94,7 +95,7 @@ export async function generateFlashcards(formData: FormData): Promise<{ count: n
     const uploads = await Promise.all(
       files.map(async (f) => ({ mimeType: f.type, data: Buffer.from(await f.arrayBuffer()).toString("base64") })),
     );
-    generated = await generateCards(subject, text, uploads);
+    generated = await generateCards(subject, text, uploads, formData.get("multipleChoice") === "1");
   } catch (err) {
     console.error("Gemini generation failed:", err);
     if (!process.env.GEMINI_API_KEY) return { error: "No Gemini API key yet. Add GEMINI_API_KEY to .env.local." };

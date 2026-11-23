@@ -20,6 +20,17 @@ assert.equal(parseCards({ cards: [{ question: "x".repeat(5000), answer: "a" }] }
 assert.deepEqual(parseCards(null), { topicTitle: "", cards: [] }, "null reply is empty");
 assert.deepEqual(parseCards({ cards: "nope" }).cards, [], "non-array cards is empty");
 
+// Multiple-choice distractors: kept only as 3 distinct wrong options, else the card stays show-answer.
+const mc = (distractors: unknown) => parseCards({ cards: [{ question: "Q", answer: "E. coli", highYieldTip: "", distractors }] }).cards[0];
+assert.deepEqual(mc([" Proteus ", "Shigella", "Salmonella"]).distractors, ["Proteus", "Shigella", "Salmonella"], "distractors trimmed");
+assert.equal(mc(["Proteus", "Shigella"]).distractors, undefined, "too few dropped");
+assert.equal(mc(["Proteus", "e. coli", "Salmonella"]).distractors, undefined, "answer among distractors dropped");
+assert.equal(mc(["Proteus", "proteus", "Salmonella"]).distractors, undefined, "duplicates dropped");
+assert.equal(mc(["Proteus", " ", "Salmonella"]).distractors, undefined, "blank dropped");
+assert.equal(mc(["Proteus", 5, "Salmonella"]).distractors, undefined, "non-string dropped");
+assert.equal(mc("nope").distractors, undefined, "non-array dropped");
+assert.equal(mc(["Proteus", "Shigella", "Salmonella"]).question, "Q", "card kept either way");
+
 console.log("card checks passed");
 
 // Upload batch rules (shared by the panel and the server).

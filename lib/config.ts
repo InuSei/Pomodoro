@@ -50,6 +50,7 @@ export async function getDeck(): Promise<DeckCard[]> {
     question: c.question,
     answer: c.answer,
     highYieldTip: c.highYieldTip ?? "",
+    distractors: c.distractors ?? [],
     status: c.status as DeckCard["status"],
     lastReviewedAt: c.lastReviewedAt ? c.lastReviewedAt.toISOString() : null,
   }));

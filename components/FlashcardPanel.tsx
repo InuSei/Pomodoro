@@ -21,6 +21,7 @@ export default function FlashcardPanel({ deck }: { deck: DeckCard[] }) {
   const [notes, setNotes] = useState("");
   const [files, setFiles] = useState<Picked[]>([]);
   const [pages, setPages] = useState("");
+  const [multipleChoice, setMultipleChoice] = useState(false);
   const [preparing, setPreparing] = useState(false);
   const [pending, setPending] = useState(false);
   const hasPdf = files.some((p) => isPdf(p.file));
@@ -103,6 +104,7 @@ export default function FlashcardPanel({ deck }: { deck: DeckCard[] }) {
       const fd = new FormData();
       fd.set("subject", subject);
       fd.set("notes", notes);
+      if (multipleChoice) fd.set("multipleChoice", "1");
       for (const f of toSend) fd.append("files", f);
       const r = await generateFlashcards(fd);
       if ("error" in r) {
@@ -256,6 +258,19 @@ export default function FlashcardPanel({ deck }: { deck: DeckCard[] }) {
               />
             </label>
           )}
+
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={multipleChoice}
+              onChange={(e) => setMultipleChoice(e.target.checked)}
+              className="size-4 accent-accent"
+            />
+            <span>
+              <span className="font-bold">Multiple choice</span>
+              <span className="text-muted"> · 4 options per card instead of show-answer</span>
+            </span>
+          </label>
 
           <button
             type="submit"

@@ -8,6 +8,8 @@ const schema = new Schema(
     question: { type: String, required: true, trim: true, maxlength: 1000 },
     answer: { type: String, required: true, trim: true, maxlength: 1000 },
     highYieldTip: { type: String, trim: true, maxlength: 500 },
+    // Wrong options for a multiple-choice card; absent on show-answer cards.
+    distractors: { type: [{ type: String, trim: true, maxlength: 1000 }], default: undefined },
     status: { type: String, enum: ["learning", "mastered"], default: "learning" },
     reviewCount: { type: Number, default: 0, min: 0 },
     lastReviewedAt: Date,

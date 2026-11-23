@@ -10,6 +10,7 @@ export type DeckCard = {
   question: string;
   answer: string;
   highYieldTip: string;
+  distractors: string[]; // empty = show-answer card
   status: "learning" | "mastered";
   lastReviewedAt: string | null;
 };
